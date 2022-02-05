@@ -10,7 +10,7 @@ from cryptography.hazmat.primitives.asymmetric.utils import \
 from cryptography.hazmat.primitives.serialization import load_pem_public_key
 from cwt.helpers.hcert import load_pem_hcert_dsc
 
-from certificate_loader import CertificateLoader, create_chunked_cert
+from opencovid.certificate_loader import CertificateLoader, create_chunked_cert
 
 
 class CertificateLoader_DE(CertificateLoader):
