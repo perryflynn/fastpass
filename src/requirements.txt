@@ -1,0 +1,7 @@
+base45
+cbor2
+pillow
+pyzbar
+evdev
+setuptools-rust
+cwt

@@ -1,8 +1,21 @@
 # fastpass
 
-**Project Status:** PoC & Investigation
+**Project Status:** Covid check works, now make it fancy
 
 Verify german COVID vaccination certificates and collect contact data.
+
+## System dependencies
+
+```sh
+apt install python3 python3-wheel python3-setuptools rust-all
+```
+
+## Python 3 dependencies
+
+```sh
+cd src
+pip install --no-cache-dir -r requirements.txt
+```
 
 ## Technology
 
