@@ -54,18 +54,18 @@ def validate(dcc: str) -> Tuple[bool, str, dict]:
 
     dcc = _decode(dcc)
     if dcc is None:
-        return [False, None]
+        return ( False, False, "Invalid format", None )
 
     validatecerts = _load_certificates()
 
     try:
         decoded = cwt.decode(dcc, keys=validatecerts)
         claims = Claims.new(decoded)
-        return ( True, "Validated successfully", claims.to_dict() )
+        return ( True, True, "Validated successfully", claims.to_dict() )
     except Exception as e:
         try:
             decoded_noverify = cbor2.loads(dcc)
             decoded_noverify = cbor2.loads(decoded_noverify.value[2])
-            return ( False, "Unable to validate", decoded_noverify )
+            return ( True, False, "Unable to validate", decoded_noverify )
         except Exception as e:
-            return ( False, "Unable to validate or decode", None )
+            return ( False, False, "Unable to validate or decode", None )

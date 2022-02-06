@@ -10,22 +10,25 @@ def validate(certstr: str) -> dict:
 
     response = {
         'status': False,
-        'cryptovalid': result[0],
-        'cryptovalidmsg': result[1],
+        'iscovidcert': result[0],
+        'cryptovalid': result[1],
+        'cryptovalidmsg': result[2],
         'info': None,
         'issuer': None,
         'vaccinationstatus': None,
         'notvalidyet': None,
         'expired': None,
         'timerangeerror': None,
+        'europeanexpired': None,
     }
 
     # check if these weird outline fields exist
     keychecks = (
+        result[3] is not None
         # certinfo
-        -260 in result[2].keys() and 1 in result[2][-260]
+        and -260 in result[3].keys() and 1 in result[3][-260]
         # country and time range
-        and 1 in result[2].keys() and 4 in result[2].keys() and 6 in result[2].keys()
+        and 1 in result[3].keys() and 4 in result[3].keys() and 6 in result[3].keys()
     )
 
     if not keychecks:
@@ -33,9 +36,9 @@ def validate(certstr: str) -> dict:
         return response
 
     # check certificate contents
-    info = result[2][-260][1]
+    info = result[3][-260][1]
     response['info'] = info
-    response['issuer'] = result[2][1]
+    response['issuer'] = result[3][1]
 
     # check vaccination status
     response['vaccinationstatus'] = info['v'][0]['dn'] >= info['v'][0]['sd']
@@ -46,20 +49,26 @@ def validate(certstr: str) -> dict:
     # 5 = not before
     # 6 = issued at
     tsnow = int(time.time())
-    tsexpire = result[2][4]
-    tsissued = result[2][6]
+    tsexpire = result[3][4]
+    tsissued = result[3][6]
 
     response['timerangeerror'] = tsexpire <= tsissued
     response['notvalidyet'] = tsissued < tsexpire and tsnow < tsissued
     response['expired'] = tsissued < tsexpire and tsnow > tsexpire
 
+    # european 270d limit
+    secs = 270*24*60*60
+    response['europeanexpired'] = tsnow > tsissued + secs
+
     # overall status
     response['status'] = (
-        response['cryptovalid']
+        response['iscovidcert']
+        and response['cryptovalid']
         and response['vaccinationstatus']
-        and not response['timerangeerror']
-        and not response['notvalidyet']
-        and not response['expired']
+        and not response['europeanexpired']
+        #and not response['timerangeerror']
+        #and not response['notvalidyet']
+        #and not response['expired']
     )
 
     return response

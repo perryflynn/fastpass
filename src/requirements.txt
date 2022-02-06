@@ -5,3 +5,5 @@ pyzbar
 evdev
 setuptools-rust
 cwt
+termcolor
+pykeepass
