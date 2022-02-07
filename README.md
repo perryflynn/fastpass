@@ -4,6 +4,8 @@ Verify german COVID vaccination certificates and collect contact data on events.
 
 **Project Status:** First prototype, please test!
 
+![demo](demo.gif)
+
 ## Features
 
 - Works offline with PC + QR Code scanner
